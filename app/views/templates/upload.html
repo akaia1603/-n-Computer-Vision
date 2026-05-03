@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Upload & Analyze{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <h1 class="hero-title">Upload <span class="gradient-text">Image</span> Analysis</h1>
+  <p class="hero-subtitle">Tải lên ảnh để AI phân tích cảm xúc khuôn mặt</p>
+</div>
+
+<div class="upload-layout">
+
+  <!-- ===== LEFT: Upload Area ===== -->
+  <div class="upload-panel card" id="upload-panel">
+    <div class="panel-header">
+      <h2 class="panel-title"><span>🖼️</span> Chọn ảnh</h2>
+    </div>
+
+    <!-- Drop Zone -->
+    <div class="drop-zone" id="drop-zone"
+         ondragover="handleDragOver(event)"
+         ondragleave="handleDragLeave(event)"
+         ondrop="handleDrop(event)"
+         onclick="document.getElementById('file-input').click()">
+      <div class="drop-icon" id="drop-icon">📁</div>
+      <p class="drop-title">Kéo & Thả ảnh vào đây</p>
+      <p class="drop-sub">hoặc click để chọn file</p>
+      <p class="drop-formats">PNG, JPG, JPEG, WEBP &bull; Tối đa 16MB</p>
+    </div>
+
+    <!-- File input (hidden) -->
+    <input type="file" id="file-input" accept="image/*" style="display:none"
+           onchange="handleFileSelect(event)" />
+
+    <!-- Preview -->
+    <div class="preview-wrapper hidden" id="preview-wrapper">
+      <img id="preview-img" src="" alt="Preview" class="preview-img" />
+      <div class="preview-overlay" id="preview-overlay">
+        <!-- Bounding boxes được vẽ lên đây -->
+      </div>
+    </div>
+
+    <!-- Analyze button -->
+    <button class="btn btn-primary btn-full" id="btn-analyze"
+            onclick="analyzeImage()" disabled>
+      <span id="btn-analyze-icon">🔍</span>
+      <span id="btn-analyze-text">Phân tích cảm xúc</span>
+    </button>
+
+    <!-- Progress -->
+    <div class="progress-bar hidden" id="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- ===== RIGHT: Results ===== -->
+  <div class="results-panel" id="results-panel">
+
+    <!-- Annotated result image -->
+    <div class="card result-image-card hidden" id="result-image-card">
+      <div class="panel-header">
+        <h3 class="panel-title"><span>✅</span> Kết quả phân tích</h3>
+        <button class="btn btn-sm" onclick="downloadResult()" id="btn-download">
+          💾 Tải xuống
+        </button>
+      </div>
+      <img id="result-image" src="" alt="Annotated" class="result-img" />
+    </div>
+
+    <!-- Face results list -->
+    <div class="card faces-detail-card" id="faces-detail-card">
+      <div class="panel-header">
+        <h3 class="panel-title"><span>👥</span> Chi tiết từng khuôn mặt</h3>
+        <span class="badge" id="face-count-badge">0 khuôn mặt</span>
+      </div>
+      <div id="faces-detail-list">
+        <div class="empty-state-upload">
+          <div class="empty-icon">🔮</div>
+          <p>Upload ảnh và nhấn Phân tích để xem kết quả</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Probability Chart -->
+    <div class="card chart-card hidden" id="chart-card">
+      <div class="panel-header">
+        <h3 class="panel-title"><span>📊</span> Phân bố cảm xúc</h3>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="prob-chart"></canvas>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Error Toast -->
+<div class="toast hidden" id="error-toast">
+  <span id="toast-message"></span>
+  <button onclick="hideToast()">✕</button>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  window.FER_CONFIG = {
+    emotions: {{ emotion_labels | tojson }},
+    colors:   {{ emotion_colors | tojson }},
+    emojis:   {{ emotion_emojis | tojson }},
+    mode:     "upload",
+  };
+</script>
+{% endblock %}

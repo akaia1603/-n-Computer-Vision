@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Real-time Webcam FER{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <h1 class="hero-title">Real-time <span class="gradient-text">Emotion</span> Recognition</h1>
+  <p class="hero-subtitle">AI phân tích cảm xúc khuôn mặt theo thời gian thực qua webcam của bạn</p>
+</div>
+
+<div class="webcam-layout">
+
+  <!-- ===== LEFT: Webcam Feed ===== -->
+  <div class="webcam-panel card" id="webcam-panel">
+    <div class="panel-header">
+      <h2 class="panel-title"><span>📷</span> Live Feed</h2>
+      <div class="webcam-controls">
+        <button class="btn btn-primary" id="btn-start" onclick="startWebcam()">
+          <span>▶</span> Bắt đầu
+        </button>
+        <button class="btn btn-danger hidden" id="btn-stop" onclick="stopWebcam()">
+          <span>⏹</span> Dừng
+        </button>
+      </div>
+    </div>
+
+    <!-- Video + Canvas overlay -->
+    <div class="video-wrapper" id="video-wrapper">
+      <video id="webcam-video" autoplay muted playsinline></video>
+      <canvas id="overlay-canvas"></canvas>
+
+      <!-- Placeholder khi chưa bật camera -->
+      <div class="video-placeholder" id="video-placeholder">
+        <div class="placeholder-icon">📷</div>
+        <p>Nhấn <strong>Bắt đầu</strong> để bật camera</p>
+        <p class="placeholder-sub">AI sẽ phân tích cảm xúc theo thời gian thực</p>
+      </div>
+
+      <!-- FPS counter -->
+      <div class="fps-badge" id="fps-badge">0 FPS</div>
+
+      <!-- Face count -->
+      <div class="face-count-badge" id="face-count-badge">0 faces</div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="status-bar" id="status-bar">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">Chờ kết nối camera...</span>
+    </div>
+  </div>
+
+  <!-- ===== RIGHT: Results ===== -->
+  <div class="results-panel" id="results-panel">
+
+    <!-- Top Emotion Card -->
+    <div class="card emotion-card" id="emotion-card">
+      <div class="emotion-display" id="emotion-display">
+        <div class="emotion-emoji" id="emotion-emoji">😐</div>
+        <div class="emotion-label" id="emotion-label">—</div>
+        <div class="emotion-confidence" id="emotion-confidence">
+          <div class="conf-bar-track">
+            <div class="conf-bar-fill" id="conf-bar" style="width:0%"></div>
+          </div>
+          <span id="conf-text">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Probability Chart -->
+    <div class="card chart-card" id="chart-card">
+      <div class="panel-header">
+        <h3 class="panel-title"><span>📊</span> Phân bố cảm xúc</h3>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="prob-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Face List -->
+    <div class="card faces-card" id="faces-card">
+      <div class="panel-header">
+        <h3 class="panel-title"><span>👥</span> Khuôn mặt phát hiện</h3>
+      </div>
+      <div class="faces-list" id="faces-list">
+        <p class="empty-state">Chưa phát hiện khuôn mặt nào...</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Truyền config từ Python sang JS
+  window.FER_CONFIG = {
+    emotions: {{ emotion_labels | tojson }},
+    colors:   {{ emotion_colors | tojson }},
+    emojis:   {{ emotion_emojis | tojson }},
+    mode:     "webcam",
+  };
+</script>
+{% endblock %}
