@@ -105,7 +105,7 @@ class FaceDetectionService:
             return None, []
         return self.detect_from_array(img_bgr)
 
-    def crop_face(self, img_rgb, face_box, padding=0.15):
+    def crop_face(self, img_rgb, face_box, padding=0.10):
         """
         Crop vùng mặt (với padding) từ ảnh RGB.
 

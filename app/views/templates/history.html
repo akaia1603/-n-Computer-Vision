@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <h1 class="hero-title">Prediction <span class="gradient-text">History</span></h1>
+  <p class="hero-subtitle">Xem lại lịch sử phân tích cảm xúc</p>
+</div>
+
+<div class="history-layout">
+  <div class="card stats-card" id="stats-card">
+    <div class="panel-header">
+      <h3 class="panel-title">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+          <path d="M21 12a9 9 0 1 1-9-9"/>
+          <polyline points="22 3 12 13 9 10"/>
+        </svg>
+        Thống kê
+      </h3>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-value" id="stat-total">—</span>
+        <span class="stat-label">Tổng lượt</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value" id="stat-avg-conf">—</span>
+        <span class="stat-label">Conf TB</span>
+      </div>
+    </div>
+    <div class="stats-emotions" id="stats-emotions"></div>
+  </div>
+
+  <div class="card history-card">
+    <div class="panel-header">
+      <h3 class="panel-title">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Lịch sử gần đây
+      </h3>
+    </div>
+    <div class="table-wrapper">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Thời gian</th>
+            <th>Emotion</th>
+            <th>Confidence</th>
+            <th>Model</th>
+            <th>Nguồn</th>
+          </tr>
+        </thead>
+        <tbody id="history-body">
+          <tr><td colspan="5" class="empty-cell">Đang tải...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+async function loadHistory() {
+  try {
+    const [histRes, statsRes] = await Promise.all([
+      fetch('/api/history'),
+      fetch('/api/stats'),
+    ]);
+    const hist = await histRes.json();
+    const stats = await statsRes.json();
+
+    // Stats
+    document.getElementById('stat-total').textContent = stats.total || 0;
+    if (stats.emotions && stats.emotions.length > 0) {
+      const total = stats.total || 1;
+      document.getElementById('stat-avg-conf').textContent =
+        (stats.emotions.reduce((s, e) => s + e.avg_conf * e.cnt, 0) / total * 100).toFixed(0) + '%';
+
+      const container = document.getElementById('stats-emotions');
+      container.innerHTML = stats.emotions.map(e => `
+        <div class="stat-emotion-row">
+          <span class="stat-emotion-name">${e.emotion}</span>
+          <div class="stat-emotion-bar-track">
+            <div class="stat-emotion-bar-fill" style="width:${(e.cnt / total * 100).toFixed(1)}%; background:${CFG.colors[e.emotion] || '#6366f1'}"></div>
+          </div>
+          <span class="stat-emotion-count">${e.cnt}</span>
+        </div>
+      `).join('');
+    }
+
+    // History table
+    const tbody = document.getElementById('history-body');
+    if (!hist.history || hist.history.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-cell">Chưa có dữ liệu</td></tr>';
+      return;
+    }
+    tbody.innerHTML = hist.history.map(r => `
+      <tr>
+        <td class="cell-time">${new Date(r.timestamp).toLocaleString('vi-VN')}</td>
+        <td><span class="emotion-badge" style="background:${CFG.colors[r.emotion] || '#6366f1'}">${r.emotion}</span></td>
+        <td>${(r.confidence * 100).toFixed(1)}%</td>
+        <td>${r.model_type}</td>
+        <td>${r.source}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    console.error('History load error:', e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadHistory);
+</script>
+{% endblock %}

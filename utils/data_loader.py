@@ -24,13 +24,8 @@ import tensorflow as tf
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.model_selection import train_test_split
 import cv2
-
-
-# ============================================================
 # HẰNG SỐ
-# ============================================================
-
-# Mapping label ID → tên cảm xúc (tiếng Anh)
+# Mapping label ID
 EMOTION_MAP = {
     1: "Surprise",
     2: "Fear",
@@ -40,8 +35,6 @@ EMOTION_MAP = {
     6: "Anger",
     7: "Neutral"
 }
-
-
 
 # Số lớp cảm xúc
 NUM_CLASSES = 7
@@ -79,37 +72,9 @@ def preprocess_raf_np(image):
     image[..., 2] = (image[..., 2] - RAF_MEAN[2]) / RAF_STD[2]
     return image
 
-
-# ============================================================
 # HÀM LOAD DỮ LIỆU TỪ THƯ MỤC
-# ============================================================
 
 def load_image_paths_and_labels(data_dir, split="train"):
-    """
-    Đọc đường dẫn ảnh và nhãn từ thư mục.
-    
-    Cấu trúc thư mục kỳ vọng:
-        data_dir/
-        ├── train/
-        │   ├── 1/  (Surprise)
-        │   ├── 2/  (Fear)
-        │   ...
-        │   └── 7/  (Neutral)
-        └── test/
-            ├── 1/ ... 7/
-    
-    Args:
-        data_dir (str): Đường dẫn thư mục gốc chứa data
-        split (str): "train" hoặc "test"
-    
-    Returns:
-        image_paths (list[str]): Danh sách đường dẫn ảnh
-        labels (list[int]): Nhãn tương ứng (0-indexed: 0-6)
-    
-    Lưu ý:
-        - Nhãn được chuyển từ 1-indexed (RAF-DB) sang 0-indexed (model)
-        - Label 1 (Surprise) → 0, Label 7 (Neutral) → 6
-    """
     split_dir = os.path.join(data_dir, split)
     image_paths = []
     labels = []
@@ -136,10 +101,7 @@ def load_image_paths_and_labels(data_dir, split="train"):
     print(f"  📁 Loaded {split}: {len(image_paths):,} ảnh, {len(set(labels))} classes")
     return image_paths, labels
 
-
-# ============================================================
 # TÍNH CLASS WEIGHTS
-# ============================================================
 
 def compute_class_weights(labels):
     """
@@ -274,11 +236,7 @@ def apply_augmentation(image):
     
     return image
 
-
-# ============================================================
 # TẠO TF.DATA.DATASET
-# ============================================================
-
 def create_datasets(data_dir="data", img_size=(100, 100), batch_size=32,
                     val_split=0.2, seed=42, augment_train=True):
     """
@@ -316,7 +274,7 @@ def create_datasets(data_dir="data", img_size=(100, 100), batch_size=32,
         ...     print(images.shape)  # (16, 224, 224, 3)
     """
     print("=" * 60)
-    print("📦 LOADING DATASETS")
+    print("LOADING DATASETS")
     print("=" * 60)
     
     # 1. Load paths và labels
@@ -386,16 +344,13 @@ def create_datasets(data_dir="data", img_size=(100, 100), batch_size=32,
         "test_paths": test_paths,
     }
     
-    print(f"\n  ✅ Datasets created successfully!")
+    print(f"\n Datasets created successfully!")
     print(f"     Image size: {img_size}")
     print(f"     Batch size: {batch_size}")
     
     return train_ds, val_ds, test_ds, class_weights, info
 
-
-# ============================================================
 # TIỆN ÍCH: LOAD ẢNH ĐƠN LẺ (dùng cho inference/demo)
-# ============================================================
 
 def load_single_image(image_path, img_size=(100, 100)):
     """
@@ -444,11 +399,7 @@ def load_image_from_array(image_array, img_size=(100, 100)):
     image_normalized = preprocess_raf_np(image_resized)
     return np.expand_dims(image_normalized, axis=0)
 
-
-# ============================================================
 # PREVIEW AUGMENTATION (cho EDA)
-# ============================================================
-
 def preview_augmentation(image_path, img_size=(100, 100), n_augments=8):
     """
     Tạo preview các phép augmentation cho một ảnh.
@@ -493,4 +444,4 @@ if __name__ == "__main__":
         print(f"Labels shape: {batch_labels.shape}")
         print(f"Pixel range: [{batch_images.numpy().min():.3f}, {batch_images.numpy().max():.3f}]")
     
-    print("\n✅ data_loader test passed!")
+    print("\ndata_loader test passed!")

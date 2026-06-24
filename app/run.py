@@ -20,10 +20,10 @@ from app import create_app
 app = create_app(os.environ.get("FLASK_ENV", "development"))
 
 if __name__ == "__main__":
-    print("╔══════════════════════════════════════════════════════════╗")
-    print("║   🎭 Facial Emotion Recognition — Web Demo              ║")
-    print("╠══════════════════════════════════════════════════════════╣")
-    print("║   URL: http://127.0.0.1:5000                            ║")
-    print("║   Press CTRL+C to stop                                  ║")
-    print("╚══════════════════════════════════════════════════════════╝")
+    print("=" * 60)
+    print("    Facial Emotion Recognition - Web Demo")
+    print("=" * 60)
+    print("    URL: http://127.0.0.1:5000")
+    print("    Press CTRL+C to stop")
+    print("=" * 60)
     app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)

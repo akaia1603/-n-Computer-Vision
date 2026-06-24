@@ -81,8 +81,8 @@ class EmotionPredictor:
         if best_path is None:
             keras_files = glob.glob(os.path.join(self.model_dir, "*.keras"))
             if keras_files:
-                # Ưu tiên mobilenetv2 > resnet > baseline
-                for prefer in ["mobilenetv2", "resnet50", "baseline"]:
+                # Ưu tiên finetuned > mobilenetv2 > resnet > baseline
+                for prefer in ["finetuned", "mobilenetv2", "resnet50", "baseline"]:
                     for kf in keras_files:
                         if prefer in kf.lower():
                             best_path = kf
@@ -172,7 +172,7 @@ class EmotionPredictor:
 
         try:
             img_tensor = self.preprocess(img_array)
-            proba = self.model.predict(img_tensor, verbose=0)[0]
+            proba = self.model(img_tensor, training=False).numpy()[0]
             pred_idx = int(np.argmax(proba))
             confidence = float(proba[pred_idx])
 

@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.venv*/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data
+data/DATASET/
+data/FER2013/
+
+# Models / Weights
+modelcheckpoints/
+checkpoints/
+pretrain/
+outputs/models/
+*.pth
+*.keras
+*.h5
+
+# Logs
+log/
+outputs/eda/
+outputs/evaluation/
+outputs/training_logs/
+
+# IDE
+.vscode/
+.idea/
+
+# App data
+data/history.db
+
+# OS
+Thumbs.db
+.DS_Store
+nul
+
+# Colab transfer
+colab_upload/

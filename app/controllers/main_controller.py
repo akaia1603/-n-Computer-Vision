@@ -43,6 +43,11 @@ def upload_page():
     )
 
 
+@main_bp.route("/history")
+def history_page():
+    return render_template("history.html")
+
+
 @main_bp.route("/api/info")
 def api_info():
     """JSON endpoint trả về thông tin model đang chạy."""

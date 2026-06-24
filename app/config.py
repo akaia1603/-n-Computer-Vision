@@ -25,7 +25,7 @@ class Config:
     IMAGE_SIZE_TRANSFER = (224, 224)
 
     # Inference
-    CONFIDENCE_THRESHOLD = 0.3    # Min confidence để hiển thị kết quả
+    CONFIDENCE_THRESHOLD = 0.2    # Min confidence để hiển thị kết quả
     FACE_SCALE_FACTOR = 1.1
     FACE_MIN_NEIGHBORS = 4
     FACE_MIN_SIZE = (48, 48)
@@ -36,22 +36,22 @@ class Config:
         "Happiness", "Sadness", "Anger", "Neutral"
     ]
     EMOTION_COLORS = {
-        "Surprise":  "#FFD93D",
-        "Fear":      "#FF6B6B",
-        "Disgust":   "#6BCB77",
-        "Happiness": "#4D96FF",
-        "Sadness":   "#9B59B6",
-        "Anger":     "#E74C3C",
-        "Neutral":   "#95A5A6",
+        "Surprise":  "#d97706", # Elegant Amber
+        "Fear":      "#7c3aed", # Premium Purple
+        "Disgust":   "#0f766e", # Deep Teal
+        "Happiness": "#059669", # Emerald Green
+        "Sadness":   "#2563eb", # Royal Blue
+        "Anger":     "#dc2626", # Sophisticated Crimson
+        "Neutral":   "#4b5563", # Refined Slate Grey
     }
     EMOTION_EMOJIS = {
-        "Surprise":  "😮",
-        "Fear":      "😨",
-        "Disgust":   "🤢",
-        "Happiness": "😄",
-        "Sadness":   "😢",
-        "Anger":     "😠",
-        "Neutral":   "😐",
+        "Surprise":  "",
+        "Fear":      "",
+        "Disgust":   "",
+        "Happiness": "",
+        "Sadness":   "",
+        "Anger":     "",
+        "Neutral":   "",
     }
 
 

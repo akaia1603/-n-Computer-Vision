@@ -14,19 +14,19 @@ Sử dụng:
 Yêu cầu: tensorflow, keras
 """
 
-import tensorflow as tf
-from tensorflow import keras
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+import keras
 from keras import layers, models, regularizers
+import tensorflow as tf
 
 
 # ============================================================
 # 1. BASELINE CNN — Mạng CNN tùy chỉnh
 # ============================================================
 
+@keras.saving.register_keras_serializable(package="CustomLayers")
 class ConvLayer(layers.Layer):
-    """
-    A 2D convolutional layer followed by Batch Normalization and ReLU activation.
-    """
     def __init__(self, kernel_num, kernel_size, strides=1, padding='same', kernel_initializer='he_normal', name=None, **kwargs):
         super(ConvLayer, self).__init__(name=name, **kwargs)
         self.kernel_num = kernel_num
@@ -55,6 +55,10 @@ class ConvLayer(layers.Layer):
             "kernel_initializer": self.kernel_initializer,
         })
         return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
 
 def get_base_model(image_shape):
     """
